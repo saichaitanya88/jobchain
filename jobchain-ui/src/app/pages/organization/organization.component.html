@@ -1,0 +1,30 @@
+<div class="org-banner">
+  <div class="org-image">
+    <img src="http://lorempixel.com/640/480/business" />
+  </div>
+  <div>
+    <h3>{{ organization.name }}</h3>
+    <p>{{ organization.description }}</p>
+    <p>{{ organization.address.address }}</p>
+  </div>
+</div>
+
+<div>
+  <h6>Requests Pending</h6>
+  <div *ngFor="let history of pendingWorkHistories">
+    <profile-work-history [history]="history" [isOrganization]="true" (approved)="onWorkHistoryApproved(history)"></profile-work-history>
+  </div>
+  <div *ngFor="let history of pendingEducationHistories">
+    <profile-work-history [history]="history" [isOrganization]="true" (approved)="onEducationHistoryApproved(history)"></profile-work-history>
+  </div>
+</div>
+
+<div>
+  <h6>Requests Approved</h6>
+  <div *ngFor="let history of approvedWorkHistories">
+    <profile-work-history [history]="history" [isOrganization]="true"></profile-work-history>
+  </div>
+  <div *ngFor="let history of approvedEducationHistories">
+    <profile-work-history [history]="history" [isOrganization]="true"></profile-work-history>
+  </div>
+</div>

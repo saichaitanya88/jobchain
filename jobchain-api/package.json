@@ -1,0 +1,33 @@
+{
+  "name": "jobchain-api",
+  "version": "0.0.1",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsc && node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "http-status-codes": "1.1.6",
+    "rxjs": "5.3.0",
+    "composer-admin": "latest",
+    "composer-client": "latest"
+  },
+  "devDependencies": {
+    "typescript": "2.2.1",
+    "@types/node": "7.0.31",
+    "@types/http-status-codes": "1.0.29",
+    "body-parser": "1.17.0",
+    "@types/body-parser": "0.0.34",
+    "morgan": "1.8.1",
+    "@types/morgan": "1.7.32",
+    "express": "4.15.0",
+    "@types/express": "4.0.35",
+    "debug": "2.6.1",
+    "@types/debug": "0.0.29",
+    "cors": "2.8.3",
+    "@types/cors": "2.8.1"
+  },
+  "description": ""
+}

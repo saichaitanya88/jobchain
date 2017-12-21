@@ -1,0 +1,27 @@
+.person-banner{
+    text-align: center;
+    background-color: lavender;
+    padding: 10px;
+    transition: box-shadow 0.1s ease-in-out;
+    &:hover{
+        box-shadow: 2px 2px 5px 2px lightslategrey;
+    }
+    .person-image{
+        min-height: 128px;
+    }
+    img{
+        border-radius: 75px;
+        height: 128px;
+    }
+}
+
+.person-work-history, .person-education-history{
+    margin-top: 20px;
+    ul{
+        list-style-type: none;
+    }
+    .add-button{
+        text-align: right;
+        margin-bottom: 5px;
+    }
+}

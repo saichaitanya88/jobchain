@@ -1,0 +1,20 @@
+<div class="work-history">
+  <div *ngIf="!isOrganization">
+    <b>Company: </b>{{history.organization.name}} ({{history.organization.organizationId}})
+  </div>
+  <div *ngIf="isOrganization">
+      <b>Person: </b>{{history.owner.firstName}} {{history.owner.lastName}} ({{history.owner.personId}})
+    </div>
+  <div>
+    <b>Title: </b>{{history.title}} <mdl-icon *ngIf="history.verified">verified_user</mdl-icon>
+  </div>
+  <div>
+      <b>Description: </b> {{history.description}}
+  </div>
+  <div>
+    {{parseDate(history.startDate)}} to <span *ngIf="history.endDate">{{parseDate(history.endDate)}}</span> <span *ngIf="!history.endDate">Present</span>
+  </div>
+  <div *ngIf="showApproveButton">
+    <button mdl-button (click)="approveHistory()">Approve</button>
+  </div>
+</div>

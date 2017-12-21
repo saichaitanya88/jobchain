@@ -1,0 +1,58 @@
+<div class="center">
+  <div>
+    <div>
+      <h3>Welcome to the JobChain</h3>
+      <h6>Registry for Work and Education history, built on the blockchain</h6>
+    </div>
+    <div class="register">
+      <h4>Register as an </h4>
+      <mdl-tabs mdl-ripple mdl-tab-active-index="0" (mdl-tab-active-changed)="tabChanged($event)">
+        <mdl-tab-panel mdl-tab-panel-title="Individual">
+          <div>
+            <mdl-textfield type="text" label="First Name" [(ngModel)]="person.firstName"></mdl-textfield>
+          </div>
+          <div>
+            <mdl-textfield type="text" label="Last Name" [(ngModel)]="person.lastName"></mdl-textfield>
+          </div>
+          <div>
+            <mdl-textfield type="text" label="Email" [(ngModel)]="person.credentials.email"></mdl-textfield>
+          </div>
+          <div>
+            <mdl-textfield type="password" label="Password" [(ngModel)]="person.credentials.password"></mdl-textfield>
+          </div>
+          <div>
+            <mdl-textfield type="password" label="Confirm Password" [(ngModel)]="person.credentials.confirmPassword"></mdl-textfield>
+          </div>
+          <div>
+            <mdl-button mdl-button-type="raised" mdl-ripple (click)="registerIndividual()">Register</mdl-button>
+          </div>
+        </mdl-tab-panel>
+        <mdl-tab-panel mdl-tab-panel-title="Organization">
+          <div>
+            <mdl-textfield type="text" label="Name" [(ngModel)]="organization.name"></mdl-textfield>
+          </div>
+          <div>
+            <mdl-checkbox [mdl-ripple]="true" [(ngModel)]="isCompany">
+              Company
+            </mdl-checkbox>
+            <mdl-checkbox [mdl-ripple]="true" [(ngModel)]="isEducation">
+              Education
+            </mdl-checkbox>
+          </div>
+          <div>
+            <mdl-textfield type="text" label="Email" [(ngModel)]="organization.credentials.email"></mdl-textfield>
+          </div>
+          <div>
+            <mdl-textfield type="password" label="Password" [(ngModel)]="organization.credentials.password"></mdl-textfield>
+          </div>
+          <div>
+            <mdl-textfield type="password" label="Confirm Password" [(ngModel)]="organization.credentials.confirmPassword"></mdl-textfield>
+          </div>
+          <div>
+            <mdl-button mdl-button-type="raised" mdl-ripple (click)="registerOrganization()">Register</mdl-button>
+          </div>
+        </mdl-tab-panel>
+      </mdl-tabs>
+    </div>
+  </div>
+</div>

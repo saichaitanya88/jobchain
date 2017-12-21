@@ -1,0 +1,15 @@
+
+/** */
+query verifyPersonLogin {
+  description: "Verify user credentials"
+  statement:
+      SELECT ca.jobchain.Person
+          WHERE (credentials.email==_$email AND credentials.password==_$password)
+}
+
+query verifyOrgLogin {
+  description: "Verify org credentials"
+  statement:
+      SELECT ca.jobchain.Organization
+          WHERE (credentials.email==_$email AND credentials.password==_$password)
+}

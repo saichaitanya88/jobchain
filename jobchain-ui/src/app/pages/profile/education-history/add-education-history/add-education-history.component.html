@@ -1,0 +1,32 @@
+<mdl-dialog #dialog [mdl-dialog-config]="{
+  clickOutsideToClose: true,
+  styles:{'width': '300px'},
+  isModal:true,
+  enterTransitionDuration: 400,
+  leaveTransitionDuration: 400}" (show)="onDialogShow(dialogRef)">
+    <h4 class="mdl-dialog__title">New education history</h4>
+    <div class="mdl-dialog__content">
+        <label>Organization</label>
+        <select name="organizationId" (change)="orgChanged($event)">
+            <option>Please Select</option>
+            <option *ngFor="let o of organizations;" [attr.value]="o.organizationId">{{o.name}}</option>
+        </select>
+
+        <label>Title</label>
+        <mdl-textfield class="no-padding" type="text" [(ngModel)]="educationHistory.title" autofocus></mdl-textfield>
+
+        <label>Description</label>
+        <mdl-textfield class="no-padding" type="text" [(ngModel)]="educationHistory.description"></mdl-textfield>
+
+        <label>StartDate</label>
+        <input type="date" [(ngModel)]="educationHistory.startDate" />
+
+        <label>EndDate</label>
+        <input type="date" [(ngModel)]="educationHistory.endDate" />
+        
+    </div>
+    <div class="mdl-dialog__actions">
+        <button mdl-button (click)="save()" mdl-button-type="raised" mdl-colored="primary" mdl-ripple>Save</button>
+        <button mdl-button (click)="close()" mdl-ripple>Cancel</button>
+    </div>
+</mdl-dialog>

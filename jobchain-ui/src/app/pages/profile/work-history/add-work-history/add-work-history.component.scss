@@ -1,0 +1,30 @@
+label{
+    display: block;
+    margin-top: 5px;
+}
+
+input[type=date]{
+    border: none;
+    border-bottom: 2px solid rgba(0,0,0,.12);
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    outline: none;
+    &:focus{
+        border-bottom: 2px solid rgb(63,81,181);
+    }
+}
+
+select{
+    outline: none;
+    background-color: white;
+    border: none;
+    border-bottom: 2px solid rgba(0,0,0,.12);
+    width: 100%;
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    &:focus{
+        border-bottom: 2px solid rgb(63,81,181);
+    }
+}

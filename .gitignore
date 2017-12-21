@@ -1,0 +1,8 @@
+/composer-logs
+*/composer-logs/**
+jobchain-workspace.code-workspace
+composer-logs/
+node_modules/
+*/.vscode
+*.bna
+networkadmin.card

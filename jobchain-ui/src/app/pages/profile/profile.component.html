@@ -1,0 +1,33 @@
+<div class="person-banner">
+  <div class="person-image">
+    <img src="http://lorempixel.com/640/480/people" />
+  </div>
+  <div>
+    <h3>{{person.firstName}} {{person.lastName}}</h3>
+  </div>
+  <div>{{person.description}}</div>
+</div>
+
+
+<div class="person-work-history">
+  <div class="add-button">
+    <mdl-button (click)="openWorkHistoryModal()">
+      <mdl-icon>add</mdl-icon>Add Work History</mdl-button>
+  </div>
+  <div *ngFor="let history of workHistories">
+    <profile-work-history [history]="history"></profile-work-history>
+  </div>
+</div>
+
+<div class="person-education-history">
+  <div class="add-button">
+    <mdl-button (click)="openEducationHistoryModal()">
+      <mdl-icon>add</mdl-icon>Add Education History</mdl-button>
+  </div>
+  <div *ngFor="let history of educationHistories">
+    <profile-education-history [history]="history"></profile-education-history>
+  </div>
+</div>
+
+<profile-add-work-history [open]='dialogs["work-history"]' [person]="person" (addWorkHistory)="onWorkHistoryAdded()"></profile-add-work-history>
+<profile-add-education-history [open]='dialogs["education-history"]' [person]="person" (addEducationHistory)="onEducationHistoryAdded()"></profile-add-education-history>

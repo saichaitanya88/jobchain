@@ -1,0 +1,53 @@
+/**
+ * work and education history built on the block chain
+ */
+namespace ca.jobchain
+
+concept Credentials{
+    o String email
+    o String password
+}
+concept Address{
+    o String address
+}
+enum OrganizationType{
+    o Company
+    o Education
+}
+participant Person identified by personId {
+    o String personId
+    o String firstName
+    o String lastName
+    o Credentials credentials
+    o String phone optional
+    o String description optional
+}
+participant Organization identified by organizationId {
+    o String organizationId
+    o String name
+    o Address address
+    o String description optional
+    o Credentials credentials
+    o Boolean verified default=false
+    o OrganizationType[] organizationTypes
+}
+asset WorkHistory identified by workHistoryId {
+    o String workHistoryId
+    o String title
+    o String description
+    o DateTime startDate
+    o DateTime endDate optional
+    o Boolean verified default=false
+    --> Person owner
+    --> Organization organization
+}
+asset EducationHistory identified by educationHistoryId {
+    o String educationHistoryId
+    o String title
+    o String description
+    o DateTime startDate
+    o DateTime endDate optional
+    o Boolean verified default=false
+    --> Person owner
+    --> Organization organization
+}

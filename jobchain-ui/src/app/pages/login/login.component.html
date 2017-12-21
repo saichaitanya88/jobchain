@@ -1,0 +1,19 @@
+<div class="center">
+  <div>
+    <h3>Welcome to the JobChain</h3>
+    <h6>Registry for Work and Education history, built on the blockchain</h6>
+  </div>
+  <div class="login">
+    <div>
+      <mdl-textfield type="text" label="email" [(ngModel)]="credentials.email"></mdl-textfield>
+    </div>
+    <div>
+      <mdl-textfield type="password" label="password" [(ngModel)]="credentials.password"></mdl-textfield>
+    </div>
+    <div>
+      <mdl-button mdl-button-type="raised" mdl-ripple (click)="login()">
+        Login
+      </mdl-button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+.center{
+    width: 50%;
+    margin: auto;
+    text-align: center;
+}
+
+.register{
+    border: 1px solid lightslategray;
+    box-shadow: 2px 2px 5px 2px lightslategrey;
+    padding: 40px 20px;
+    .mdl-checkbox{
+        width: 300px;
+        text-align: left;
+        display: block;
+        margin: auto;
+    }
+}

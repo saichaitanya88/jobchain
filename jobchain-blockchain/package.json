@@ -1,0 +1,24 @@
+{
+  "name": "jobchain",
+  "version": "0.0.1",
+  "description": "LinkedIn built on BlockChain",
+  "scripts": {
+    "test": "mocha --recursive",
+    "start": "./scripts.sh"
+  },
+  "author": "Sai Chaitanya, Indrani Gorti",
+  "email": "cherukumilli.sai@gmail.com, indrani.gorti@gmail.com",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "angular2-uuid": "1.1.1",
+    "composer-admin": "latest",
+    "composer-client": "latest",
+    "composer-common": "latest",
+    "composer-connector-embedded": "latest",
+    "chai": "latest",
+    "eslint": "latest",
+    "istanbul": "latest",
+    "mkdirp": "latest",
+    "mocha": "latest"
+  }
+}

@@ -1,0 +1,26 @@
+<div class="demo-container" mdl-shadow="2">
+  <mdl-layout mdl-layout-fixed-header mdl-layout-header-seamed>
+    <mdl-layout-header>
+      <mdl-layout-header-row>
+        <mdl-layout-title [routerLink]="['/']">JobChain</mdl-layout-title>
+        <mdl-layout-spacer></mdl-layout-spacer>
+        <!-- Navigation. We hide it in small screens. -->
+        <nav class="mdl-navigation">
+          <a *ngFor="let navLink of navLinks;" class="mdl-navigation__link" (click)="navLink.onClick()">{{navLink.label}}</a>
+        </nav>
+      </mdl-layout-header-row>
+    </mdl-layout-header>
+    <!-- <mdl-layout-drawer>
+      <mdl-layout-title>Title</mdl-layout-title>
+      <nav class="mdl-navigation">
+        <a class="mdl-navigation__link">Link</a>
+        <a class="mdl-navigation__link">Link</a>
+        <a class="mdl-navigation__link">Link</a>
+      </nav>
+    </mdl-layout-drawer> -->
+    <mdl-layout-content class="layout-content">
+      <router-outlet></router-outlet>
+      <dialog-outlet></dialog-outlet>
+    </mdl-layout-content>
+  </mdl-layout>
+</div>
