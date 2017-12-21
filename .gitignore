@@ -6,3 +6,4 @@ node_modules/
 */.vscode
 *.bna
 networkadmin.card
+jobchain-api/package-lock.json
