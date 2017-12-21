@@ -8,12 +8,9 @@ import { blockChainNetwork } from "../blockChainNetwork";
 import { EducationHistoryModel } from "../models/index";
 
 export class EducationHistoryApi extends LocalApi {
-    educationHistoryRegistry: AssetRegistry;
-
     constructor() {
         super();
         this.initializeRoutes();
-        this.initRegistry();
     }
     initializeRoutes() {
         this.routes = [
@@ -22,14 +19,12 @@ export class EducationHistoryApi extends LocalApi {
             { endPoint: "/education-history/:id", method: "put", action: this.updateEducationHistory },
         ]
     }
-    async initRegistry() {
-        this.educationHistoryRegistry = await blockChainNetwork.businessNetworkConnection.getAssetRegistry("ca.jobchain.EducationHistory");
-    }
+
     createEducationHistory = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         try {
             let { resource, workHistory } = await this.getNewResourceFromModel(req.body);
             if (resource) {
-                await this.educationHistoryRegistry.add(resource);
+                await blockChainNetwork.registries.educationHistory.add(resource);
                 res.status(HttpStatus.CREATED).send(workHistory);
             }
             else {
@@ -49,9 +44,9 @@ export class EducationHistoryApi extends LocalApi {
                 return;
             }
             // TODO: blockchain should validate that the user requesting the update is authorized to make the update
-            let resource = await this.educationHistoryRegistry.get(educationHistory.educationHistoryId);
+            let resource = await blockChainNetwork.registries.educationHistory.get(educationHistory.educationHistoryId);
             resource = this.updateResourceFromModel(educationHistory, resource);
-            await this.educationHistoryRegistry.update(resource);
+            await blockChainNetwork.registries.educationHistory.update(resource);
             res.status(HttpStatus.OK).send(educationHistory);
         }
         catch (error) {
@@ -81,12 +76,12 @@ export class EducationHistoryApi extends LocalApi {
         }
     }
     async getPersonEducationHistories(personId: string) {
-        let educationHistoryResources = await this.educationHistoryRegistry.getAll();
+        let educationHistoryResources = await blockChainNetwork.registries.educationHistory.getAll();
         let educationHistories: EducationHistoryModel[] = educationHistoryResources.map(r => this.getModelFromResource(r));
         return educationHistories.filter(w => w.ownerId == personId);
     }
     async getOrgEducationHistories(organizationId: string) {
-        let workHistoryResources = await this.educationHistoryRegistry.getAll();
+        let workHistoryResources = await blockChainNetwork.registries.educationHistory.getAll();
         let workHistories: EducationHistoryModel[] = workHistoryResources.map(r => this.getModelFromResource(r));
         console.log(workHistories);
         return workHistories.filter(w => w.organizationId == organizationId);
@@ -126,8 +121,5 @@ export class EducationHistoryApi extends LocalApi {
         resource.endDate = workHistory.endDate;
         resource.startDate = workHistory.startDate;
         return resource;
-    }
-    workHistoryExists() {
-
     }
 }

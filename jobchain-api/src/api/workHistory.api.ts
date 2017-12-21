@@ -8,12 +8,10 @@ import { blockChainNetwork } from "../blockChainNetwork";
 import { WorkHistoryModel } from "../models/index";
 
 export class WorkHistoryApi extends LocalApi {
-    workHistoryRegistry: AssetRegistry;
 
     constructor() {
         super();
         this.initializeRoutes();
-        this.initRegistry();
     }
     initializeRoutes() {
         this.routes = [
@@ -22,14 +20,11 @@ export class WorkHistoryApi extends LocalApi {
             { endPoint: "/work-history/:id", method: "put", action: this.updateWorkHistory },
         ]
     }
-    async initRegistry() {
-        this.workHistoryRegistry = await blockChainNetwork.businessNetworkConnection.getAssetRegistry("ca.jobchain.WorkHistory");
-    }
     createWorkHistory = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         try {
             let { resource, workHistory } = await this.getNewResourceFromModel(req.body);
             if (resource) {
-                await this.workHistoryRegistry.add(resource);
+                await blockChainNetwork.registries.workHistory.add(resource);
                 res.status(HttpStatus.CREATED).send(workHistory);
             }
             else {
@@ -49,9 +44,9 @@ export class WorkHistoryApi extends LocalApi {
                 return;
             }
             // TODO: blockchain should validate that the user requesting the update is authorized to make the update
-            let resource = await this.workHistoryRegistry.get(workHistory.workHistoryId);
+            let resource = await blockChainNetwork.registries.workHistory.get(workHistory.workHistoryId);
             resource = this.updateResourceFromModel(workHistory, resource);
-            await this.workHistoryRegistry.update(resource);
+            await blockChainNetwork.registries.workHistory.update(resource);
             res.status(HttpStatus.OK).send(workHistory);
         }
         catch (error) {
@@ -81,12 +76,12 @@ export class WorkHistoryApi extends LocalApi {
         }
     }
     async getPersonWorkHistories(personId: string) {
-        let workHistoryResources = await this.workHistoryRegistry.getAll();
+        let workHistoryResources = await blockChainNetwork.registries.workHistory.getAll();
         let workHistories: WorkHistoryModel[] = workHistoryResources.map(r => this.getModelFromResource(r));
         return workHistories.filter(w => w.ownerId == personId);
     }
     async getOrgWorkHistories(organizationId: string) {
-        let workHistoryResources = await this.workHistoryRegistry.getAll();
+        let workHistoryResources = await blockChainNetwork.registries.workHistory.getAll();
         let workHistories: WorkHistoryModel[] = workHistoryResources.map(r => this.getModelFromResource(r));
         console.log(workHistories);
         return workHistories.filter(w => w.organizationId == organizationId);
@@ -126,8 +121,5 @@ export class WorkHistoryApi extends LocalApi {
         resource.endDate = workHistory.endDate;
         resource.startDate = workHistory.startDate;
         return resource;
-    }
-    workHistoryExists() {
-
     }
 }

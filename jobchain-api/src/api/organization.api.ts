@@ -8,12 +8,10 @@ import { blockChainNetwork } from "../blockChainNetwork";
 import { OrganizationModel, OrganizationTypeModel } from "../models/index";
 
 export class OrganizationApi extends LocalApi {
-    organizationRegistry: ParticipantRegistry;
     
     constructor() {
         super();
         this.initializeRoutes();
-        this.initRegistry();
     }
     initializeRoutes() {
         this.routes = [
@@ -23,9 +21,7 @@ export class OrganizationApi extends LocalApi {
             { action: this.updateOrganization, method: "put", endPoint: "/organization/:id" },
         ];
     }
-    async initRegistry() {
-        this.organizationRegistry = await blockChainNetwork.businessNetworkConnection.getParticipantRegistry("ca.jobchain.Organization");
-    }
+
     createOrganization = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         try {
             let { resource, organization } = this.getResourceFromModel(req.body);
@@ -35,7 +31,7 @@ export class OrganizationApi extends LocalApi {
                     res.status(HttpStatus.BAD_REQUEST).send("Organization is invalid");
                 }
                 else{
-                    await this.organizationRegistry.add(resource);
+                    await blockChainNetwork.registries.organization.add(resource);
                     res.status(HttpStatus.CREATED).send(organization);
                 }
             }
@@ -52,12 +48,12 @@ export class OrganizationApi extends LocalApi {
         res.status(HttpStatus.NOT_IMPLEMENTED).send("Update Organizations Not Implemented");
     }
     getOrganization = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        let resources = await this.organizationRegistry.getAll();
+        let resources = await blockChainNetwork.registries.organization.getAll();
         let organization = resources.map((resource => new OrganizationModel(resource))).find(o => o.credentials.email == req.params.email)
         res.send(organization);
     }
     getOrganizations = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        let resources = await this.organizationRegistry.getAll();
+        let resources = await blockChainNetwork.registries.organization.getAll();
         res.send(resources.map((resource => new OrganizationModel(resource))));
     }
 
@@ -80,7 +76,7 @@ export class OrganizationApi extends LocalApi {
 
     //TODO: This should be validated directly on the blockchain network using the cto
     async organizationExists(organization: OrganizationModel){
-        let allResources = await this.organizationRegistry.getAll();
+        let allResources = await blockChainNetwork.registries.organization.getAll();
         let allOrgs: OrganizationModel[]= allResources.map(r => new OrganizationModel(r));
         return allOrgs.some(o => o.credentials.email == organization.credentials.email);
     }

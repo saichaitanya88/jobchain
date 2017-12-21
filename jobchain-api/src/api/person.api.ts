@@ -9,11 +9,10 @@ import { PersonModel } from "../models/index";
 import { HTTP_VERSION_NOT_SUPPORTED } from "http-status-codes";
 
 export class PersonApi extends LocalApi {
-    personRegistry: ParticipantRegistry;
+
     constructor() {
         super();
         this.initializeRoutes();
-        this.initRegistry();
     }
     initializeRoutes() {
         this.routes = [
@@ -22,9 +21,6 @@ export class PersonApi extends LocalApi {
             { action: this.getPerson, method: "get", endPoint: "/person/:email" },
             { action: this.updatePerson, method: "put", endPoint: "/person/:id" }
         ];
-    }
-    async initRegistry() {
-        this.personRegistry = await blockChainNetwork.businessNetworkConnection.getParticipantRegistry("ca.jobchain.Person");
     }
 
     createPerson = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -36,7 +32,7 @@ export class PersonApi extends LocalApi {
                     res.status(HttpStatus.BAD_REQUEST).send("Person is invalid");
                 }
                 else {
-                    await this.personRegistry.add(resource);
+                    await blockChainNetwork.registries.person.add(resource);
                     res.status(HttpStatus.CREATED).send(person);
                 }
             }
@@ -55,7 +51,7 @@ export class PersonApi extends LocalApi {
     }
 
     getPerson = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        let resources = await this.personRegistry.getAll();
+        let resources = await blockChainNetwork.registries.person.getAll();
         let person = resources.map((resource => new PersonModel(resource))).find(p => p.credentials.email == req.params.email);
         res.send(person);
     }
@@ -81,7 +77,7 @@ export class PersonApi extends LocalApi {
 
     //TODO: This should be validated directly on the blockchain network using the cto
     async personExists(person: PersonModel) {
-        let allResources = await this.personRegistry.getAll();
+        let allResources = await blockChainNetwork.registries.person.getAll();
         let allPersons: PersonModel[] = allResources.map(r => new PersonModel(r));
         return allPersons.some(p => p.credentials.email == person.credentials.email);
     }

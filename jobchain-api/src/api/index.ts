@@ -4,9 +4,6 @@ import { environment } from "../environment";
 
 export class LocalApi {
     routes: RouteDefinition[];
-    constructor() {
-        
-    }
 }
 export class RouteDefinition{
     method: string;
