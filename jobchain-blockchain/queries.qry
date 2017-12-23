@@ -1,15 +1,71 @@
+/** Queries */
 
-/** */
-query verifyPersonLogin {
-  description: "Verify user credentials"
+query getPersonByEmail {
+  description: "Retrieves person using email address"
+  statement:
+      SELECT ca.jobchain.Person
+          WHERE (credentials.email==_$email)
+}
+
+query getPersonByCredentials {
+  description: "Retrieves person using credentials provided"
   statement:
       SELECT ca.jobchain.Person
           WHERE (credentials.email==_$email AND credentials.password==_$password)
 }
 
-query verifyOrgLogin {
-  description: "Verify org credentials"
+query getOrganizationByEmail {
+  description: "Retrieves organization using email address"
+  statement:
+      SELECT ca.jobchain.Organization
+          WHERE (credentials.email==_$email)
+}
+
+query getOrganizationByCredentials {
+  description: "Retrieves organization using credentials provided"
   statement:
       SELECT ca.jobchain.Organization
           WHERE (credentials.email==_$email AND credentials.password==_$password)
+}
+
+query getPersonWorkHistory {
+  description: "Retrieves WorkHistories linked to Person"
+  statement: 
+    SELECT ca.jobchain.WorkHistory 
+      WHERE (owner==_$ownerId)
+}
+
+query getPersonEducationHistory {
+  description: "Retrieves EducationHistories linked to Person"
+  statement: 
+    SELECT ca.jobchain.EducationHistory 
+      WHERE (owner==_$ownerId)
+}
+
+query getOrganizationWorkHistory {
+  description: "Retrieves WorkHistories linked to Organization"
+  statement: 
+    SELECT ca.jobchain.WorkHistory 
+      WHERE (organization==_$organizationId)
+}
+
+query getOrganizationEducationHistory {
+  description: "Retrieves EducationHistories linked to Organization"
+  statement: 
+    SELECT ca.jobchain.EducationHistory 
+      WHERE (organization==_$organizationId)
+}
+
+query getEducationOrganizations {
+  description: "Retrieves Organizations that are of Type Education"
+  statement: 
+    SELECT ca.jobchain.Organization 
+      WHERE (organizationTypes CONTAINS "Education")
+}
+
+query getCompanyOrganizations {
+  description: "Retrieves Organizations that are of Type Company"
+  statement: 
+    SELECT ca.jobchain.Organization 
+      WHERE (organizationTypes CONTAINS "Company")
 }

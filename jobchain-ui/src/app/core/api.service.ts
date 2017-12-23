@@ -42,16 +42,10 @@ export class ApiService implements RepositoryService {
       headers: { "Content-type": "application/json" }
     };
     return Observable.create((observer: Observer<any>) => {
-      fetch(configuration.ServerWithApiUrl + "/organizations", request)
+      fetch(configuration.ServerWithApiUrl + "/organizations/company", request)
         .then(res => res.json())
         .then(organizations => {
-          // TODO: remove then when getCompanies query is available on the api
-          let orgs = (<OrganizationModel[]>organizations.map(o => new OrganizationModel(o)))
-            .filter(o => {
-              let type = OrganizationTypeModel.Company;
-              return o.organizationTypes.includes(type) ||
-                o.organizationTypes.map(ot => ot.toString()).includes(OrganizationTypeModel[type])
-            });
+          let orgs = (<OrganizationModel[]>organizations.map(o => new OrganizationModel(o)));
           observer.next(orgs);
           observer.complete();
         }).catch(observer.error);
@@ -63,22 +57,15 @@ export class ApiService implements RepositoryService {
       headers: { "Content-type": "application/json" }
     };
     return Observable.create((observer: Observer<any>) => {
-      fetch(configuration.ServerWithApiUrl + "/organizations", request)
+      fetch(configuration.ServerWithApiUrl + "/organizations/education", request)
         .then(res => res.json())
         .then(organizations => {
-          // TODO: remove then when getInstitutions query is available on the api
-          let orgs = (<OrganizationModel[]>organizations.map(o => new OrganizationModel(o)))
-            .filter(o => {
-              let type = OrganizationTypeModel.Education;
-              return o.organizationTypes.includes(type) ||
-                o.organizationTypes.map(ot => ot.toString()).includes(OrganizationTypeModel[type])
-            });
+          let orgs = (<OrganizationModel[]>organizations.map(o => new OrganizationModel(o)));
           observer.next(orgs);
           observer.complete();
         }).catch(observer.error);
     });
   }
-
 }
 
 export class ApiPersonRepository implements PersonRepository {
@@ -179,7 +166,7 @@ export class ApiWorkHistoryRepository implements WorkHistoryRepository {
     };
 
     return Observable.create((observer: Observer<WorkHistoryModel>) => {
-      fetch(configuration.ServerWithApiUrl + "/education-history" + `/${workHistory.workHistoryId}`, request)
+      fetch(configuration.ServerWithApiUrl + "/work-history" + `/${workHistory.workHistoryId}`, request)
         .then(res => new WorkHistoryModel(res.json()))
         .then(history => {
           observer.next(history);

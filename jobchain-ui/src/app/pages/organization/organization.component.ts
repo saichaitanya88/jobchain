@@ -10,8 +10,8 @@ import { AuthService } from '../../core/auth.service';
 })
 export class OrganizationComponent implements OnInit {
   organization: OrganizationModel;
-  workHistories: WorkHistoryModel[];
-  educationHistories: EducationHistoryModel[];
+  workHistories: WorkHistoryModel[] = [];
+  educationHistories: EducationHistoryModel[] = [];
 
   constructor(private apiService: ApiService, private authService: AuthService) {
 

@@ -5,7 +5,8 @@ import * as HttpStatus from "http-status-codes";
 import { LocalApi } from "./index";
 import { AssetRegistry } from "composer-client";
 import { blockChainNetwork } from "../blockChainNetwork";
-import { WorkHistoryModel } from "../models/index";
+import { WorkHistoryModel, PersonModel, OrganizationModel } from "../models/index";
+import { WorkHistory } from "../models/ca.jobchain";
 
 export class WorkHistoryApi extends LocalApi {
 
@@ -54,7 +55,7 @@ export class WorkHistoryApi extends LocalApi {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ error, errorMessage: error.toString() });
         }
     }
-    // TODO: Convert the array filters to block chain network query
+
     getWorkHistories = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         let type = req.params.personOrOrg;
         try {
@@ -66,7 +67,7 @@ export class WorkHistoryApi extends LocalApi {
                 let workHistories = await this.getOrgWorkHistories(req.params.id)
                 res.send(workHistories)
             }
-            else{
+            else {
                 res.status(HttpStatus.BAD_REQUEST).send("Invalid personOrOrg parameter")
             }
         }
@@ -75,27 +76,40 @@ export class WorkHistoryApi extends LocalApi {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ error, errorMessage: error.toString() });
         }
     }
+
     async getPersonWorkHistories(personId: string) {
-        let workHistoryResources = await blockChainNetwork.registries.workHistory.getAll();
-        let workHistories: WorkHistoryModel[] = workHistoryResources.map(r => this.getModelFromResource(r));
-        return workHistories.filter(w => w.ownerId == personId);
+        let personResourceId = `resource:ca.jobchain.Person#${personId}`;
+        let resources = await blockChainNetwork.businessNetworkConnection.query("getPersonWorkHistory", { ownerId: personResourceId });
+        let results = [];
+        for (let i = 0; i < resources.length; i++){
+            let result = await this.getModelFromResource(resources[i]);
+            results.push(result);
+        }
+        return results;
     }
+
     async getOrgWorkHistories(organizationId: string) {
-        let workHistoryResources = await blockChainNetwork.registries.workHistory.getAll();
-        let workHistories: WorkHistoryModel[] = workHistoryResources.map(r => this.getModelFromResource(r));
-        console.log(workHistories);
-        return workHistories.filter(w => w.organizationId == organizationId);
+        let orgResourceId = `resource:ca.jobchain.Organization#${organizationId}`;
+        let resources = await blockChainNetwork.businessNetworkConnection.query("getOrganizationWorkHistory", { organizationId: orgResourceId });
+        let results = [];
+        for (let i = 0; i < resources.length; i++){
+            let result = await this.getModelFromResource(resources[i]);
+            results.push(result);
+        }
+        return results;
     }
+
     getWorkHistory = (req: express.Request, res: express.Response, next: express.NextFunction) => {
         res.status(HttpStatus.NOT_IMPLEMENTED).send("Get WorkHistories not Implemented");
     }
 
-    getModelFromResource(resource: any){
-        let workHistory = new WorkHistoryModel(resource);
-        // TODO: provide owner and organization models as well rather than just the identifiers
-        workHistory.organization.organizationId = resource.organization.$identifier;
-        workHistory.owner.personId = resource.owner.$identifier;
-        workHistory.workHistoryId = resource.$identifier;
+    // TODO: use resolve instead of retrieving the org and owner separately
+    async getModelFromResource(resource: any) {
+        let workHistory = new WorkHistoryModel({...resource, workHistoryId: resource.$identifier});
+        let owner = await blockChainNetwork.registries.person.get(resource.owner.$identifier);
+        workHistory.owner = new PersonModel({ ...owner, personId: resource.owner.$identifier });
+        let organization = await blockChainNetwork.registries.organization.get(resource.organization.$identifier);
+        workHistory.organization = new OrganizationModel({ ...organization, organizationId: resource.organization.$identifier });
         return workHistory;
     }
 

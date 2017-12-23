@@ -89,8 +89,7 @@ export class WorkHistoryModel implements WorkHistory {
         return this.organization ? this.organization.organizationId : null;
     }
     isValid() {
-        console.log("this.organization", this.organization);
-        return this.ownerId && this.organization && this.workHistoryId && this.title && this.description && this.startDate;
+        return this.ownerId && this.organizationId && this.workHistoryId && this.title && this.description && this.startDate;
     }
 }
 
@@ -121,6 +120,6 @@ export class EducationHistoryModel implements EducationHistory {
         return this.organization ? this.organization.organizationId : null;
     }
     isValid() {
-        return this.ownerId && this.organization && this.educationHistoryId && this.title && this.description && this.startDate;
+        return this.ownerId && this.organizationId && this.educationHistoryId && this.title && this.description && this.startDate;
     }
 }

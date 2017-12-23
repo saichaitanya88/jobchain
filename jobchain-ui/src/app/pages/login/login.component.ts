@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit {
   redirectToHomepage() {
     if (this.authService.isPerson())
       this.router.navigate(["profile"]);
-    else
+    else if (this.authService.isOrganization())
       this.router.navigate(["organization"]);
   }
 }

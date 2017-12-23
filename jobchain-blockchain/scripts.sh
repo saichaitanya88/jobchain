@@ -16,4 +16,4 @@ composer network ping --card admin@jobchain
 # composer generator create -a jobchain@0.0.1.bna -f Typescript --outputDir models/ts
 
 # upgrade bna to re-deploy to fabric
-# composer network upgrade -n <business-network-archive> -p <connection-profile-Name> -i <upgrade-Id> -s <upgrade-Secret>
+# composer network upgrade -c PeerAdmin@hlfv1 -v jobchain@0.0.2.bna

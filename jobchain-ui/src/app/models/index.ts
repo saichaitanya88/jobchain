@@ -15,7 +15,7 @@ export class PersonModel implements Person {
     description: string;
     constructor(source?: any) {
         this.credentials = new CredentialsModel();
-        this.personId = source ? source.personId : "";
+        this.personId = source ? source.personId : null;
         this.firstName = source ? source.firstName : "";
         this.lastName = source ? source.lastName : "";
         this.phone = source ? source.phone : "";
@@ -53,12 +53,11 @@ export class OrganizationModel implements Organization {
         this.credentials.password = source && source.credentials ? source.credentials.password : "";
         this.organizationTypes = source && source.organizationTypes ? source.organizationTypes : [];
         this.name = source ? source.name : "";
-        this.organizationId = source ? source.organizationId : "";
+        this.organizationId = source ? source.organizationId : null;
         this.description = source ? source.description : "";
         this.verified = (source ? source.verified : false) || false;
     }
     isValid() {
-
         return true;
     }
 }
@@ -79,8 +78,8 @@ export class WorkHistoryModel implements WorkHistory {
         this.organization = source ? new OrganizationModel(source.organization) : null;
         this.title = source ? source.title : "";
         this.description = source ? source.description : "";
-        this.startDate = source ? new Date(source.startDate) : null;
-        this.endDate = source ? new Date(source.endDate) : null;
+        this.startDate = source && source.startDate ? new Date(source.startDate) : null;
+        this.endDate = source && source.endDate ? new Date(source.endDate) : null;
         this.verified = (source ? source.verified : false) || false;
     }
     get ownerId() {
@@ -111,8 +110,8 @@ export class EducationHistoryModel implements EducationHistory {
         this.organization = source ? new OrganizationModel(source.organization) : null;
         this.title = source ? source.title : "";
         this.description = source ? source.description : "";
-        this.startDate = source ? new Date(source.startDate) : null;
-        this.endDate = source ? new Date(source.endDate) : null;
+        this.startDate = source && source.startDate ? new Date(source.startDate) : null;
+        this.endDate = source && source.endDate ? new Date(source.endDate) : null;
         this.verified = (source ? source.verified : false) || false;
     }
     get ownerId() {
@@ -122,7 +121,6 @@ export class EducationHistoryModel implements EducationHistory {
         return this.organization ? this.organization.organizationId : null;
     }
     isValid() {
-        console.log("this.organization", this.organization);
         return this.ownerId && this.organization && this.educationHistoryId && this.title && this.description && this.startDate;
     }
 }

@@ -21,6 +21,8 @@ export class RegisterComponent implements OnInit {
   isCompany: boolean;
   isEducation: boolean;
 
+  // TODO: Expose ui to allow modifying description, address fields for person and organization, work history, education history
+
   constructor(private apiService: ApiService, private router: Router) {
     this.person = new PersonModel({ personId: UUID.UUID() });
     this.organization = new OrganizationModel({ organizationId: UUID.UUID() });

@@ -18,19 +18,19 @@ export class AuthApi extends LocalApi {
         ];
     }
 
-    // TODO: authenticate using Query rather than array filtering
     authenticate = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         try {
-            let persons = await blockChainNetwork.registries.person.getAll();
-            let person = persons.find(p => p.credentials.email == req.body.email && p.credentials.password == req.body.password);
-            if (person) {
-                res.send(new PersonModel(person));
+            let persons = await blockChainNetwork.businessNetworkConnection
+                .query("getPersonByCredentials", { email: req.body.email, password: req.body.password });
+            if (persons.length > 0) {
+                res.send(new PersonModel(persons[0]));
                 return;
             }
-            let organizations = await blockChainNetwork.registries.organization.getAll();
-            let organization = organizations.find(o => o.credentials.email == req.body.email && o.credentials.password == req.body.password);
-            if (organization) {
-                res.send(new OrganizationModel(organization));
+
+            let organizations = await blockChainNetwork.businessNetworkConnection
+                .query("getOrganizationByCredentials", { email: req.body.email, password: req.body.password });
+            if (organizations.length > 0) {
+                res.send(new OrganizationModel(organizations[0]));
                 return;
             }
             res.status(HttpStatus.BAD_REQUEST).send();

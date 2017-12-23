@@ -5,7 +5,7 @@ import * as HttpStatus from "http-status-codes";
 import { LocalApi } from "./index";
 import { AssetRegistry } from "composer-client";
 import { blockChainNetwork } from "../blockChainNetwork";
-import { EducationHistoryModel } from "../models/index";
+import { EducationHistoryModel, PersonModel, OrganizationModel } from "../models/index";
 
 export class EducationHistoryApi extends LocalApi {
     constructor() {
@@ -22,10 +22,10 @@ export class EducationHistoryApi extends LocalApi {
 
     createEducationHistory = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         try {
-            let { resource, workHistory } = await this.getNewResourceFromModel(req.body);
+            let { resource, educationHistory } = await this.getNewResourceFromModel(req.body);
             if (resource) {
                 await blockChainNetwork.registries.educationHistory.add(resource);
-                res.status(HttpStatus.CREATED).send(workHistory);
+                res.status(HttpStatus.CREATED).send(educationHistory);
             }
             else {
                 res.status(HttpStatus.BAD_REQUEST).send("EducationHistory is invalid");
@@ -40,7 +40,7 @@ export class EducationHistoryApi extends LocalApi {
         try {
             let educationHistory = new EducationHistoryModel(req.body);
             if (!educationHistory.isValid()) {
-                res.status(HttpStatus.BAD_REQUEST).send("WorkHistory is not valid");
+                res.status(HttpStatus.BAD_REQUEST).send("EducationHistory is not valid");
                 return;
             }
             // TODO: blockchain should validate that the user requesting the update is authorized to make the update
@@ -54,7 +54,7 @@ export class EducationHistoryApi extends LocalApi {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ error, errorMessage: error.toString() });
         }
     }
-    // TODO: Convert the array filters to block chain network query
+
     getEducationHistories = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         let type = req.params.personOrOrg;
         try {
@@ -66,7 +66,7 @@ export class EducationHistoryApi extends LocalApi {
                 let educationHistories = await this.getOrgEducationHistories(req.params.id)
                 res.send(educationHistories)
             }
-            else{
+            else {
                 res.status(HttpStatus.BAD_REQUEST).send("Invalid personOrOrg parameter")
             }
         }
@@ -75,51 +75,63 @@ export class EducationHistoryApi extends LocalApi {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ error, errorMessage: error.toString() });
         }
     }
+
     async getPersonEducationHistories(personId: string) {
-        let educationHistoryResources = await blockChainNetwork.registries.educationHistory.getAll();
-        let educationHistories: EducationHistoryModel[] = educationHistoryResources.map(r => this.getModelFromResource(r));
-        return educationHistories.filter(w => w.ownerId == personId);
+        let personResourceId = `resource:ca.jobchain.Person#${personId}`;
+        let resources = await blockChainNetwork.businessNetworkConnection.query("getPersonEducationHistory", { ownerId: personResourceId });
+        let results = [];
+        for (let i = 0; i < resources.length; i++){
+            let result = await this.getModelFromResource(resources[i]);
+            results.push(result);
+        }
+        return results;
     }
+
     async getOrgEducationHistories(organizationId: string) {
-        let workHistoryResources = await blockChainNetwork.registries.educationHistory.getAll();
-        let workHistories: EducationHistoryModel[] = workHistoryResources.map(r => this.getModelFromResource(r));
-        console.log(workHistories);
-        return workHistories.filter(w => w.organizationId == organizationId);
+        let orgResourceId = `resource:ca.jobchain.Organization#${organizationId}`;
+        let resources = await blockChainNetwork.businessNetworkConnection.query("getOrganizationEducationHistory", { organizationId: orgResourceId });
+        let results = [];
+        for (let i = 0; i < resources.length; i++){
+            let result = await this.getModelFromResource(resources[i]);
+            results.push(result);
+        }
+        return results;
     }
 
     getEducationHistory = (req: express.Request, res: express.Response, next: express.NextFunction) => {
         res.status(HttpStatus.NOT_IMPLEMENTED).send("Get WorkHistories not Implemented");
     }
 
-    getModelFromResource(resource: any){
-        let workHistory = new EducationHistoryModel(resource);
-        workHistory.organization.organizationId = resource.organization.$identifier;
-        workHistory.owner.personId = resource.owner.$identifier;
-        workHistory.educationHistoryId = resource.$identifier;
-        return workHistory;
+    async getModelFromResource(resource: any) {
+        let educationHistory = new EducationHistoryModel({ ...resource, educationHistoryId: resource.$identifier });
+        let owner = await blockChainNetwork.registries.person.get(resource.owner.$identifier);
+        educationHistory.owner = new PersonModel({ ...owner, personId: resource.owner.$identifier });
+        let organization = await blockChainNetwork.registries.organization.get(resource.organization.$identifier);
+        educationHistory.organization = new OrganizationModel({ ...organization, organizationId: resource.organization.$identifier });
+        return educationHistory;
     }
 
     async getNewResourceFromModel(model: EducationHistoryModel) {
-        let workHistory = new EducationHistoryModel(model);
-        if (!workHistory.isValid()) return null;
+        let educationHistory = new EducationHistoryModel(model);
+        if (!educationHistory.isValid()) return null;
 
-        let resource = blockChainNetwork.factory.newResource('ca.jobchain', 'WorkHistory', workHistory.educationHistoryId);
-        resource.description = workHistory.description;
-        resource.verified = workHistory.verified;
-        resource.title = workHistory.title;
-        resource.endDate = workHistory.endDate;
-        resource.startDate = workHistory.startDate;
-        resource.owner = blockChainNetwork.factory.newRelationship("ca.jobchain", "Person", workHistory.ownerId);
-        resource.organization = blockChainNetwork.factory.newRelationship("ca.jobchain", "Organization", workHistory.organizationId);
+        let resource = blockChainNetwork.factory.newResource('ca.jobchain', 'EducationHistory', educationHistory.educationHistoryId);
+        resource.description = educationHistory.description;
+        resource.verified = educationHistory.verified;
+        resource.title = educationHistory.title;
+        resource.endDate = educationHistory.endDate;
+        resource.startDate = educationHistory.startDate;
+        resource.owner = blockChainNetwork.factory.newRelationship("ca.jobchain", "Person", educationHistory.ownerId);
+        resource.organization = blockChainNetwork.factory.newRelationship("ca.jobchain", "Organization", educationHistory.organizationId);
 
-        return { resource, workHistory };
+        return { resource, educationHistory };
     }
-    updateResourceFromModel(workHistory: EducationHistoryModel, resource: any) {
-        resource.description = workHistory.description;
-        resource.verified = workHistory.verified;
-        resource.title = workHistory.title;
-        resource.endDate = workHistory.endDate;
-        resource.startDate = workHistory.startDate;
+    updateResourceFromModel(educationHistory: EducationHistoryModel, resource: any) {
+        resource.description = educationHistory.description;
+        resource.verified = educationHistory.verified;
+        resource.title = educationHistory.title;
+        resource.endDate = educationHistory.endDate;
+        resource.startDate = educationHistory.startDate;
         return resource;
     }
 }

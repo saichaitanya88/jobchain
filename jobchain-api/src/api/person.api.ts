@@ -51,9 +51,11 @@ export class PersonApi extends LocalApi {
     }
 
     getPerson = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        let resources = await blockChainNetwork.registries.person.getAll();
-        let person = resources.map((resource => new PersonModel(resource))).find(p => p.credentials.email == req.params.email);
-        res.send(person);
+        let persons = await blockChainNetwork.businessNetworkConnection.query("getPersonByEmail", { email: req.body.credentials.email });
+        if (persons.length > 0)
+            res.send(persons[0]);
+        else
+            res.status(HttpStatus.NOT_FOUND).send(null);
     }
 
     getPersons = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -77,8 +79,7 @@ export class PersonApi extends LocalApi {
 
     //TODO: This should be validated directly on the blockchain network using the cto
     async personExists(person: PersonModel) {
-        let allResources = await blockChainNetwork.registries.person.getAll();
-        let allPersons: PersonModel[] = allResources.map(r => new PersonModel(r));
-        return allPersons.some(p => p.credentials.email == person.credentials.email);
+        let allResources = await blockChainNetwork.businessNetworkConnection.query("getPersonByEmail", { email: person.credentials.email });
+        return allResources.length > 0;
     }
 }

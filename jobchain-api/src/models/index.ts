@@ -15,7 +15,7 @@ export class PersonModel implements Person {
     description: string;
     constructor(source?: any) {
         this.credentials = new CredentialsModel();
-        this.personId = source ? source.personId : "";
+        this.personId = source ? source.personId : null;
         this.firstName = source ? source.firstName : "";
         this.lastName = source ? source.lastName : "";
         this.phone = source ? source.phone : "";
@@ -24,11 +24,7 @@ export class PersonModel implements Person {
         this.credentials.password = source && source.credentials ? source.credentials.password : "";
     }
     isValid() {
-        let validEmailRegEx = /^.+@.+$/i
-        let emailFormatValid = this.credentials && this.credentials.email && validEmailRegEx.test(this.credentials.email);
-        return this.firstName && this.lastName && this.personId && 
-            this.credentials && this.credentials.password && this.credentials.email && 
-            emailFormatValid && true;
+        return this.firstName && this.lastName && this.personId && this.credentials && this.credentials.password && this.credentials.email;
     }
 }
 
@@ -55,14 +51,13 @@ export class OrganizationModel implements Organization {
         this.address.address = source && source.address ? source.address.address : "";
         this.credentials.email = source && source.credentials ? source.credentials.email : "";
         this.credentials.password = source && source.credentials ? source.credentials.password : "";
-        this.organizationTypes = source ? source.organizationTypes : [];
+        this.organizationTypes = source && source.organizationTypes ? source.organizationTypes : [];
         this.name = source ? source.name : "";
-        this.organizationId = source ? source.organizationId : "";
+        this.organizationId = source ? source.organizationId : null;
         this.description = source ? source.description : "";
         this.verified = (source ? source.verified : false) || false;
     }
     isValid() {
-
         return true;
     }
 }
@@ -125,7 +120,6 @@ export class EducationHistoryModel implements EducationHistory {
         return this.organization ? this.organization.organizationId : null;
     }
     isValid() {
-        console.log("this.organization", this.organization);
         return this.ownerId && this.organization && this.educationHistoryId && this.title && this.description && this.startDate;
     }
 }

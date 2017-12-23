@@ -16,6 +16,8 @@ export class OrganizationApi extends LocalApi {
     initializeRoutes() {
         this.routes = [
             { action: this.getOrganizations, method: "get", endPoint: "/organizations" },
+            { action: this.getEducationOrgs, method: "get", endPoint: "/organizations/education" },
+            { action: this.getCompanyOrgs, method: "get", endPoint: "/organizations/company" },
             { action: this.createOrganization, method: "post", endPoint: "/organization" },
             { action: this.getOrganization, method: "get", endPoint: "/organization/:email" },
             { action: this.updateOrganization, method: "put", endPoint: "/organization/:id" },
@@ -56,6 +58,14 @@ export class OrganizationApi extends LocalApi {
         let resources = await blockChainNetwork.registries.organization.getAll();
         res.send(resources.map((resource => new OrganizationModel(resource))));
     }
+    getEducationOrgs = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        let resources = await blockChainNetwork.businessNetworkConnection.query("getEducationOrganizations");
+        res.send(resources.map((resource => new OrganizationModel(resource))));
+    }
+    getCompanyOrgs = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        let resources = await blockChainNetwork.businessNetworkConnection.query("getCompanyOrganizations");
+        res.send(resources.map((resource => new OrganizationModel(resource))));
+    }
 
     getResourceFromModel(model: OrganizationModel) {
         let organization = new OrganizationModel(model);
@@ -76,8 +86,7 @@ export class OrganizationApi extends LocalApi {
 
     //TODO: This should be validated directly on the blockchain network using the cto
     async organizationExists(organization: OrganizationModel){
-        let allResources = await blockChainNetwork.registries.organization.getAll();
-        let allOrgs: OrganizationModel[]= allResources.map(r => new OrganizationModel(r));
-        return allOrgs.some(o => o.credentials.email == organization.credentials.email);
+        let allResources = await blockChainNetwork.businessNetworkConnection.query("getOrganizationByEmail", { email: organization.credentials.email });
+        return allResources.length > 0;
     }
 }
