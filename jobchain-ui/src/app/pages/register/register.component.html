@@ -15,6 +15,9 @@
             <mdl-textfield type="text" label="Last Name" [(ngModel)]="person.lastName"></mdl-textfield>
           </div>
           <div>
+            <mdl-textfield type="text" label="Description" [(ngModel)]="person.description"></mdl-textfield>
+          </div>
+          <div>
             <mdl-textfield type="text" label="Email" [(ngModel)]="person.credentials.email"></mdl-textfield>
           </div>
           <div>
@@ -30,6 +33,12 @@
         <mdl-tab-panel mdl-tab-panel-title="Organization">
           <div>
             <mdl-textfield type="text" label="Name" [(ngModel)]="organization.name"></mdl-textfield>
+          </div>
+          <div>
+            <mdl-textfield type="text" label="Description" [(ngModel)]="organization.description"></mdl-textfield>
+          </div>
+          <div>
+            <mdl-textfield type="text" label="Address" [(ngModel)]="organization.address.address"></mdl-textfield>
           </div>
           <div>
             <mdl-checkbox [mdl-ripple]="true" [(ngModel)]="isCompany">

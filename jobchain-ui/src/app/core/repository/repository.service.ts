@@ -4,7 +4,6 @@ import { StorageService } from '../storage.service';
 import { PersonModel, OrganizationModel, WorkHistoryModel, EducationHistoryModel, OrganizationTypeModel } from '../../models/index';
 
 
-// TODO: use interfaces when converting from local repo to api repo
 @Injectable()
 export class RepositoryService {
     person: PersonRepository;
