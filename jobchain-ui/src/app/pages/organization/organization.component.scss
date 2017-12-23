@@ -1,6 +1,6 @@
 .org-banner{
     text-align: center;
-    background-color: lavender;
+    background-color: honeydew;
     padding: 10px;
     transition: box-shadow 0.1s ease-in-out;
     &:hover{
@@ -14,10 +14,3 @@
         height: 128px;
     }
 }
-
-// .profile-work-history, .profile-education-history{
-//     margin-top: 20px;
-//     ul{
-//         list-style-type: none;        
-//     }
-// }

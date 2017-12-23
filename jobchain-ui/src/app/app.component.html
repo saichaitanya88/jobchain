@@ -1,6 +1,6 @@
 <div class="demo-container" mdl-shadow="2">
   <mdl-layout mdl-layout-fixed-header mdl-layout-header-seamed>
-    <mdl-layout-header>
+    <mdl-layout-header [ngClass]="{'organization': authService.isOrganization(), 'person': authService.isPerson()}">
       <mdl-layout-header-row>
         <mdl-layout-title [routerLink]="['/']">JobChain</mdl-layout-title>
         <mdl-layout-spacer></mdl-layout-spacer>
