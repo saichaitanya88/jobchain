@@ -10,7 +10,7 @@ async function start() {
     const port = normalizePort(process.env.PORT || 3000);
     const app = new App();
     app.express.set('port', port);
-
+    
     const server = http.createServer(app.express);
     server.listen(port);
     server.on('error', onError);
