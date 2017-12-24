@@ -1,14 +1,13 @@
 {
   "name": "jobchain",
   "version": "0.0.1",
-  "description": "LinkedIn built on BlockChain",
+  "description": "Registry for Work and Education history, built on the BlockChain",
   "scripts": {
     "test": "mocha --recursive",
     "start": "./scripts.sh"
   },
   "author": "Sai Chaitanya, Indrani Gorti",
   "email": "cherukumilli.sai@gmail.com, indrani.gorti@gmail.com",
-  "license": "Apache-2.0",
   "devDependencies": {
     "angular2-uuid": "1.1.1",
     "composer-admin": "latest",
