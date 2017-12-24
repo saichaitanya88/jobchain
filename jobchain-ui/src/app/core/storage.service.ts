@@ -17,6 +17,13 @@ export class StorageService {
     localStorage.setItem(key, JSON.stringify(value));
   }
 
+  setPlainStringItem(key: string, value: string){
+    localStorage.setItem(key, value);
+  }
+  getPlainStringItem(key: string){
+    return localStorage.getItem(key);
+  }
+
   reset(){
     localStorage.clear();
   }

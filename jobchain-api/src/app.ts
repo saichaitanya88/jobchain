@@ -3,6 +3,8 @@ import * as express from 'express';
 import * as logger from 'morgan';
 import * as bodyParser from 'body-parser';
 import * as cors from "cors";
+import * as jwt from "jsonwebtoken";
+import * as HttpStatus from "http-status-codes";
 import { BusinessNetworkConnection } from "composer-client";
 import { BusinessNetworkDefinition } from "composer-admin";
 
@@ -12,6 +14,7 @@ import { OrganizationApi } from './api/organization.api';
 import { WorkHistoryApi } from './api/workHistory.api';
 import { AuthApi } from "./api/auth.api";
 import { EducationHistoryApi } from "./api/educationHistory.api";
+import { environment } from './environment';
 
 // Creates and configures an ExpressJS web server.
 export class App {
@@ -47,22 +50,39 @@ export class App {
         let workHistoryApi = new WorkHistoryApi();
         let educationHistoryApi = new EducationHistoryApi();
         let authApi = new AuthApi();
-        this.attachEndpoints(router, personApi.routes);
-        this.attachEndpoints(router, organizationApi.routes);
-        this.attachEndpoints(router, workHistoryApi.routes);
-        this.attachEndpoints(router, educationHistoryApi.routes);
-        this.attachEndpoints(router, authApi.routes);
+        this.attachEndpoints(router, personApi.routes, this.authJwt);
+        this.attachEndpoints(router, organizationApi.routes, this.authJwt);
+        this.attachEndpoints(router, workHistoryApi.routes, this.authJwt);
+        this.attachEndpoints(router, educationHistoryApi.routes, this.authJwt);
+        this.attachEndpoints(router, authApi.routes, this.emptyAuthJwt);
         this.express.use('/api', router);
     }
 
-    private attachEndpoints(router: express.Router, routes: RouteDefinition[]){
+    private emptyAuthJwt(req: express.Request, res: express.Response, next: express.NextFunction, action: Function){
+        action(req, res, next);
+    }
+
+    private authJwt(req: express.Request, res: express.Response, next: express.NextFunction, action: Function){
+        let token: string = <string>req.headers.token;
+        if (!token){
+            res.status(HttpStatus.UNAUTHORIZED).send();
+            return;
+        }
+        let verification = jwt.verify(token, environment.secret);
+        if (verification){
+            action(req, res, next);
+        }
+        else{
+            res.status(HttpStatus.UNAUTHORIZED).send();
+        }
+    }
+
+    private attachEndpoints(router: express.Router, routes: RouteDefinition[], auth: (req: express.Request, res: express.Response, next: express.NextFunction, action: Function) => void) {
         routes.forEach(route => {
-            router[route.method](route.endPoint, route.action);
-            console.log("added endpoint", route.method.toUpperCase(), route.endPoint)
+            router[route.method](route.endPoint, (req: express.Request, res: express.Response, next: express.NextFunction) => {
+                auth(req, res, next, route.action);
+            });
+            console.log("added endpoint", route.method.toUpperCase(), route.endPoint);
         })
     }
 }
-
-
-
-//export default new App().express;

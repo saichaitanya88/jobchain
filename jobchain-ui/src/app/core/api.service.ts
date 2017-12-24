@@ -13,16 +13,25 @@ export class ApiService implements RepositoryService {
   organization: ApiOrganizationRepository;
   workHistory: ApiWorkHistoryRepository;
   educationHistory: ApiEducationHistoryRepository;
-  constructor() {
-    this.person = new ApiPersonRepository();
-    this.organization = new ApiOrganizationRepository();
-    this.educationHistory = new ApiEducationHistoryRepository();
-    this.workHistory = new ApiWorkHistoryRepository();
+  constructor(private storageService: StorageService) {
+    let authToken = storageService.getPlainStringItem("authToken");
+    this.person = new ApiPersonRepository(authToken);
+    this.organization = new ApiOrganizationRepository(authToken);
+    this.educationHistory = new ApiEducationHistoryRepository(authToken);
+    this.workHistory = new ApiWorkHistoryRepository(authToken);
   }
+
+  get headers() {
+    return {
+      "Content-type": "application/json",
+      "token": this.storageService.getPlainStringItem("authToken")
+    }
+  }
+
   login(email: string, password: string): Observable<any> {
     let request = {
       method: 'post',
-      headers: { "Content-type": "application/json" },
+      headers: this.headers,
       body: JSON.stringify({ email, password })
     };
 
@@ -31,16 +40,14 @@ export class ApiService implements RepositoryService {
         .then(res => res.json())
         .then(o => {
           let obj: any = o.personId ? new PersonModel(o) : new OrganizationModel(o);
+          obj.token = o.token;
           observer.next(obj);
           observer.complete();
         }).catch(observer.error);
     });
   }
   getCompanies(): Observable<OrganizationModel[]> {
-    let request = {
-      method: 'get',
-      headers: { "Content-type": "application/json" }
-    };
+    let request = { method: 'get', headers: this.headers };
     return Observable.create((observer: Observer<any>) => {
       fetch(configuration.ServerWithApiUrl + "/organizations/company", request)
         .then(res => res.json())
@@ -52,10 +59,7 @@ export class ApiService implements RepositoryService {
     });
   }
   getInstitutions(): Observable<OrganizationModel[]> {
-    let request = {
-      method: 'get',
-      headers: { "Content-type": "application/json" }
-    };
+    let request = { method: 'get', headers: this.headers };
     return Observable.create((observer: Observer<any>) => {
       fetch(configuration.ServerWithApiUrl + "/organizations/education", request)
         .then(res => res.json())
@@ -70,12 +74,12 @@ export class ApiService implements RepositoryService {
 
 export class ApiPersonRepository implements PersonRepository {
   persons: PersonModel[];
+  constructor(private authToken: string) { }
+  get headers() {
+    return { "Content-type": "application/json", token: this.authToken }
+  }
   createPerson(person: PersonModel): Observable<any> {
-    let request = {
-      method: 'post',
-      headers: { "Content-type": "application/json" },
-      body: JSON.stringify(person)
-    };
+    let request = { method: 'post', headers: this.headers, body: JSON.stringify(person) };
 
     return Observable.create((observer: Observer<PersonModel>) => {
       fetch(configuration.ServerWithApiUrl + "/person", request)
@@ -100,12 +104,12 @@ export class ApiPersonRepository implements PersonRepository {
 export class ApiOrganizationRepository implements OrganizationRepository {
   organizations: OrganizationModel[];
   saveChanges() { }
+  constructor(private authToken: string) { }
+  get headers() {
+    return { "Content-type": "application/json", token: this.authToken }
+  }
   createOrganization(organization: OrganizationModel): Observable<any> {
-    let request = {
-      method: 'post',
-      headers: { "Content-type": "application/json" },
-      body: JSON.stringify(organization)
-    };
+    let request = { method: 'post', headers: this.headers, body: JSON.stringify(organization) };
 
     return Observable.create((observer: Observer<PersonModel>) => {
       fetch(configuration.ServerWithApiUrl + "/organization", request)
@@ -123,10 +127,7 @@ export class ApiOrganizationRepository implements OrganizationRepository {
     throw new Error("Method not implemented.");
   }
   getOrganizations(): Observable<OrganizationModel[]> {
-    let request = {
-      method: 'get',
-      headers: { "Content-type": "application/json" }
-    };
+    let request = { method: 'get', headers: this.headers };
 
     return Observable.create((observer: Observer<OrganizationModel[]>) => {
       fetch(configuration.ServerWithApiUrl + "/organizations", request)
@@ -142,12 +143,12 @@ export class ApiOrganizationRepository implements OrganizationRepository {
 export class ApiWorkHistoryRepository implements WorkHistoryRepository {
   workHistoryRecords: WorkHistoryModel[];
   saveChanges() { }
+  constructor(private authToken: string) { }
+  get headers() {
+    return { "Content-type": "application/json", token: this.authToken }
+  }
   createWorkHistory(workHistory: WorkHistoryModel): Observable<WorkHistoryModel> {
-    let request = {
-      method: 'post',
-      headers: { "Content-type": "application/json" },
-      body: JSON.stringify(workHistory)
-    };
+    let request = { method: 'post', headers: this.headers, body: JSON.stringify(workHistory) };
 
     return Observable.create((observer: Observer<WorkHistoryModel>) => {
       fetch(configuration.ServerWithApiUrl + "/work-history", request)
@@ -159,11 +160,7 @@ export class ApiWorkHistoryRepository implements WorkHistoryRepository {
     });
   }
   updateWorkHistory(workHistory: WorkHistoryModel): Observable<WorkHistoryModel> {
-    let request = {
-      method: 'put',
-      headers: { "Content-type": "application/json" },
-      body: JSON.stringify(workHistory)
-    };
+    let request = { method: 'put', headers: this.headers, body: JSON.stringify(workHistory) };
 
     return Observable.create((observer: Observer<WorkHistoryModel>) => {
       fetch(configuration.ServerWithApiUrl + "/work-history" + `/${workHistory.workHistoryId}`, request)
@@ -175,7 +172,7 @@ export class ApiWorkHistoryRepository implements WorkHistoryRepository {
     });
   }
   getWorkHistory(params: { [key: string]: any; }): Observable<WorkHistoryModel[]> {
-    let request = { method: 'get', headers: { "Content-type": "application/json" } };
+    let request = { method: 'get', headers: this.headers };
     if (params.ownerId) {
       return Observable.create(observer => {
         fetch(`${configuration.ServerWithApiUrl}/work-history/person/${params.ownerId}`, request)
@@ -209,12 +206,12 @@ export class ApiWorkHistoryRepository implements WorkHistoryRepository {
 export class ApiEducationHistoryRepository implements EducationHistoryRepository {
   educationHistoryRecords: EducationHistoryModel[];
   saveChanges() { }
+  constructor(private authToken: string) { }
+  get headers() {
+    return { "Content-type": "application/json", token: this.authToken }
+  }
   createEducationHistory(educationHistory: EducationHistoryModel): Observable<EducationHistoryModel> {
-    let request = {
-      method: 'post',
-      headers: { "Content-type": "application/json" },
-      body: JSON.stringify(educationHistory)
-    };
+    let request = { method: 'post', headers: this.headers, body: JSON.stringify(educationHistory) };
 
     return Observable.create((observer: Observer<EducationHistoryModel>) => {
       fetch(configuration.ServerWithApiUrl + "/education-history", request)
@@ -226,11 +223,7 @@ export class ApiEducationHistoryRepository implements EducationHistoryRepository
     });
   }
   updateEducationHistory(educationHistory: EducationHistoryModel): Observable<EducationHistoryModel> {
-    let request = {
-      method: 'put',
-      headers: { "Content-type": "application/json" },
-      body: JSON.stringify(educationHistory)
-    };
+    let request = { method: 'put', headers: this.headers, body: JSON.stringify(educationHistory) };
 
     return Observable.create((observer: Observer<EducationHistoryModel>) => {
       fetch(configuration.ServerWithApiUrl + "/education-history" + `/${educationHistory.educationHistoryId}`, request)
@@ -242,7 +235,7 @@ export class ApiEducationHistoryRepository implements EducationHistoryRepository
     });
   }
   getEducationHistory(params: { [key: string]: any; }): Observable<EducationHistoryModel[]> {
-    let request = { method: 'get', headers: { "Content-type": "application/json" } };
+    let request = { method: 'get', headers: this.headers };
     if (params.ownerId) {
       return Observable.create(observer => {
         fetch(`${configuration.ServerWithApiUrl}/education-history/person/${params.ownerId}`, request)

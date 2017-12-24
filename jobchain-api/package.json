@@ -27,7 +27,9 @@
     "debug": "2.6.1",
     "@types/debug": "0.0.29",
     "cors": "2.8.3",
-    "@types/cors": "2.8.1"
+    "@types/cors": "2.8.1",
+    "jsonwebtoken": "8.1.0",
+    "@types/jsonwebtoken": "7.2.5"
   },
   "description": ""
 }

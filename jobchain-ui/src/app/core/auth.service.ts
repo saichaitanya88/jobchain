@@ -38,6 +38,7 @@ export class AuthService {
           this.organization = result;
 
         this.storageService.setItem("currentUser", result);
+        this.storageService.setPlainStringItem("authToken", result.token);
         observer.next(true);
         observer.complete();
       });
@@ -47,5 +48,6 @@ export class AuthService {
     this.person = null;
     this.organization = null;
     this.storageService.setItem("currentUser", null);
+    this.storageService.setPlainStringItem("authToken", null);
   }
 }
