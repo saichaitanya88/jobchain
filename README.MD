@@ -5,6 +5,7 @@ Registry for Work and Education history, built on the BlockChain.
 <small>*Note: This project and source code is for demonstration purposes only!*</small>
 
 This primary repository consists of three projects.
+
 jobchain-blockchain
 -------------
 This project contains the definitions for chaincode, queries, transactions, contracts. It also contains a script to build the business network archive file (.bna file) and install it on to the composer runtime. 
