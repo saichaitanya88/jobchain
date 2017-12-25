@@ -17,27 +17,7 @@ class BlockChainNetwork {
     factory: any;
     registries: Registries = new Registries();
 
-    constructor() {
-
-    }
-
-    // connect(): rx.Observable<boolean> {
-    //     return rx.Observable.create(obs => {
-    //         this.businessNetworkConnection = new BusinessNetworkConnection();
-    //         this.businessNetworkConnection.connect(this.cardName)
-    //             .then(async(result) => {
-    //                 this.businessNetworkDefinition = result;
-    //                 console.info("Connected to", this.businessNetworkDefinition.getName());
-    //                 this.factory = this.businessNetworkDefinition.getFactory();
-    //                 await this.initRegistries();
-    //                 obs.next(true);
-    //                 obs.complete();
-    //             }).catch(error => {
-    //                 console.error(error);
-    //                 process.abort();
-    //             });
-    //     });
-    // }
+    constructor() { }
 
     async connect() {
         try {

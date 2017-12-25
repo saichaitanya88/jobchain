@@ -1,21 +1,16 @@
 JobChain
 ===================
-Registry for Work and Education history, built on the BlockChain.
+Registry for Work and Education history, built on the BlockChain. 
 
 <small>*Note: This project and source code is for demonstration purposes only!*</small>
 
-This primary repository consists of three projects.
+This primary repository consists of three projects. `jobchain-blockchain` `jobchain-api` `jobchain-ui`
+
+<img src="architecture.png" />
 
 jobchain-blockchain
 -------------
-This project contains the definitions for chaincode, queries, transactions, contracts. It also contains a script to build the business network archive file (.bna file) and install it on to the composer runtime. 
-<pre>
->>> npm start
-</pre>
-
-jobchain-api
--------------
-This project contains the server side code for the distributed app, which will interact with the blockchain network to create and update records. 
+This project contains the definitions for chaincode, queries, transactions, contracts. It also contains a script to build the business network archive file (.bna file) and install it on to the Hyperledger Composer runtime. 
 <pre>
 >>> npm start
 </pre>
@@ -34,7 +29,10 @@ This project contains the client side code for the distributed app, which will a
 >>> npm start
 </pre>
 
-<small>For simplicity this application is built to allow both Individuals and Organizations (Companies/Education Institutions) access the blockchain network. However it is possible for two or three organizations to create server-side/client-side applications which interact with the blockchain network, for example: Workers Union Organization that builds and manages the application on behalf of Employees, Education Union that manages the application for Education Organizations, and lastly, Workplaces Union that builds and manages the application for Companies.</small>
+<small>For simplicity this application is built to allow both Individuals and Organizations (Companies/Education Institutions) access the blockchain network. However it is possible for two or three organizations to create server-side/client-side applications which interact with the blockchain network, for example: 
+- Workers Union Organization that builds and manages the application on behalf of Employees
+- Education Union that manages the application for Education Organizations, and lastly
+- Workplaces Union that builds and manages the application for Companies.</small>
 
 <b>Prerequisites:</b>
 
@@ -46,3 +44,4 @@ This project contains the client side code for the distributed app, which will a
     - git: 2.9.x or higher
     - Python: 2.7.x
     - IDE. eg. vscode, atom etc.
+    - Install Hyperledger Composer: https://hyperledger.github.io/composer/installing/development-tools.html
